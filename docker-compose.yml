@@ -1,0 +1,47 @@
+version: "3.2"
+
+networks:
+  general:
+    driver: overlay
+    driver_opts:
+      encrypted: "true"
+
+volumes:
+  elasticsearch1-data:
+
+services:
+  elasticsearch1:
+    image: dev/elasticsearch
+    networks:
+      - general
+    volumes:
+      - type: volume
+        source: elasticsearch1-data
+        target: /home/elasticsearch/data
+    deploy:
+      replicas: 1
+      labels:
+        - app=elasticsearch
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        window: 30s
+        max_attempts: 10
+      resources:
+        memory-swappiness: 0
+        mem_limit: 2g
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nproc: 65535
+      nofile:
+        soft: 65535
+        hard: 65535
+    # # this is not yet supported in a version 3 compose file using 'stack deploy'
+    # cap_add:
+    #   - IPC_LOCK
+    environment:
+      bootstrap.memory_lock: 'true'
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"

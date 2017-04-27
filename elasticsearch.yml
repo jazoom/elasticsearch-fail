@@ -1,0 +1,10 @@
+cluster:
+  name: es-cluster
+node:
+  name: ${HOSTNAME}
+  master: true
+  data: true
+  max_local_storage_nodes: 5
+path:
+  data: /home/elasticsearch/data
+  logs: /var/log/elasticsearch
